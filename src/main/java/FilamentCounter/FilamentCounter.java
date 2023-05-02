@@ -14,6 +14,8 @@ import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
 
+import ij.gui.GenericDialog;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,9 +36,18 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
     @Parameter
     private OpService opService;
 
+    private BasicData basicData;
+
     @Override
     public void run() {
 //        Opener fo = new Opener();
+
+
+        Dialog dialog=new Dialog();
+        dialog.run("Data required");
+
+        basicData=dialog.getBasicData();
+        System.out.println("pixelSize:"+basicData.getPixelSize()+"micro m");
         DirectoryChooser dc = new DirectoryChooser("Choose directory");
 
         String directory=dc.getDirectory();
