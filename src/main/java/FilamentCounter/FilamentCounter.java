@@ -44,6 +44,8 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
 //        LogStream logStream=public LogStream();
         System.out.println(directory);
 
+        processDirectory(directory);
+
 //        DirectoryChooser chooser = new DirectoryChooser();
 
 
@@ -65,5 +67,25 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
 //        for (RandomAccessibleInterval<T> elem : results) {
 //            uiService.show(elem);
 //        }
+    }
+
+    private void processDirectory(String directoryName) {
+        File[] content= new File(directoryName).listFiles();
+        for(File file:content){
+           if(file.isDirectory()){
+               processDirectory(file.getAbsolutePath());
+           }
+        }
+        processFilesInADirectory(directoryName);
+    }
+
+    private void processFilesInADirectory(String directoryName) {
+        System.out.println(directoryName);
+        File[] content= new File(directoryName).listFiles();
+        for(File file:content){
+            if(!file.isDirectory()){
+                System.out.println(" - "+file.getAbsolutePath());
+            }
+        }
     }
 }
