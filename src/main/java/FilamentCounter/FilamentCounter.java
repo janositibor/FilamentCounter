@@ -96,7 +96,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
         System.out.println(directoryName);
         File[] content= new File(directoryName).listFiles();
         for(File file:content){
-            if(!file.isDirectory()){
+            if(!file.isDirectory() && validFile(file)){
                 System.out.println(" - "+file.getAbsolutePath());
                 fileSpecificData=new FileSpecificData(file.getAbsolutePath());
                 resultList.add(fileSpecificData);
@@ -105,26 +105,37 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
         writeResultFromADirectory(directoryName);
     }
 
+    private boolean validFile(File file) {
+        String fileNameAndPath=file.getAbsolutePath();
+        int indexOfLastDot=fileNameAndPath.lastIndexOf(".");
+        if(indexOfLastDot<0){
+            return false;
+        }
+        System.out.println(fileNameAndPath + "->" + fileNameAndPath.substring(indexOfLastDot+1));
+        return !("csv".equals(fileNameAndPath.substring(indexOfLastDot+1)));
+    }
+
     private void writeResultFromADirectory(String directoryName) {
-        List<String> writeOutArray = new ArrayList<>(Arrays.asList(
-                "Date and time: "+ LocalDateTime.now(),
-                Dialog.PARAMETER1_NAME+": "+basicSettings.getPixelSize(),
-                Dialog.PARAMETER2_NAME+": "+basicSettings.getPeakCounterSettings().getAlpha(),
-                Dialog.PARAMETER3_NAME+": "+basicSettings.getPeakCounterSettings().getBeta(),
-                Dialog.PARAMETER4_NAME+": "+basicSettings.getPeakCounterSettings().getGamma(),
-                "",
-                "Filename and path"+FileSpecificData.SEPARATOR+"Length (microm)"+FileSpecificData.SEPARATOR+"Filament Density (1/microm)"
-        ));
+        if(resultList.size()>0) {
+            List<String> writeOutArray = new ArrayList<>(Arrays.asList(
+                    "Date and time: " + LocalDateTime.now(),
+                    Dialog.PARAMETER1_NAME + ": " + basicSettings.getPixelSize(),
+                    Dialog.PARAMETER2_NAME + ": " + basicSettings.getPeakCounterSettings().getAlpha(),
+                    Dialog.PARAMETER3_NAME + ": " + basicSettings.getPeakCounterSettings().getBeta(),
+                    Dialog.PARAMETER4_NAME + ": " + basicSettings.getPeakCounterSettings().getGamma(),
+                    "",
+                    "Filename and path" + FileSpecificData.SEPARATOR + "Length (microm)" + FileSpecificData.SEPARATOR + "Filament Density (1/microm)"
+            ));
 
-        for (int i = 0; i < resultList.size(); i++) {
-            writeOutArray.add(resultList.get(i).toString());
-        }
+            for (int i = 0; i < resultList.size(); i++) {
+                writeOutArray.add(resultList.get(i).toString());
+            }
 
-        try {
-            Files.write(Paths.get(directoryName+"\\result.csv"), writeOutArray);
-        }
-        catch (IOException ioe) {
-            ioe.printStackTrace();
+            try {
+                Files.write(Paths.get(directoryName + "\\result.csv"), writeOutArray);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
     }
 }
