@@ -27,4 +27,8 @@ public class BasicSettings {
     public void setDirectoryName(String directoryName) {
         this.directoryName = directoryName;
     }
+
+    public PeakCounterSettings getPeakCounterSettings() {
+        return peakCounterSettings;
+    }
 }
