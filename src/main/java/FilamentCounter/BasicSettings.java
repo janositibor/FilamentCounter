@@ -1,17 +1,16 @@
 package FilamentCounter;
 
-public class BasicData {
+public class BasicSettings {
     private double pixelSize;
     private String directoryName;
+    private PeakCounterSettings peakCounterSettings;
 
-    public BasicData(double pixelSize) {
+    public BasicSettings(double pixelSize, double alpha, double beta, double gamma) {
         this.pixelSize = pixelSize;
+        this.peakCounterSettings=new PeakCounterSettings(alpha, beta, gamma);
     }
 
-    public BasicData(double pixelSize, String directoryName) {
-        this.pixelSize = pixelSize;
-        this.directoryName = directoryName;
-    }
+
 
     public double getPixelSize() {
         return pixelSize;

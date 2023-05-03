@@ -2,24 +2,15 @@ package FilamentCounter;
 
 //import javafx.stage.DirectoryChooser;
 import ij.io.DirectoryChooser;
-import ij.io.LogStream;
-import net.imagej.Dataset;
-import net.imagej.ImageJ;
 import net.imagej.ops.OpService;
-import net.imglib2.RandomAccessibleInterval;
-import net.imglib2.img.Img;
 import net.imglib2.type.numeric.RealType;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.ui.UIService;
 
-import ij.gui.GenericDialog;
-
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @Plugin(type = Command.class, menuPath = "Plugins>Filament Counter")
 public class FilamentCounter<T extends RealType<T>> implements Command {
@@ -36,7 +27,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
     @Parameter
     private OpService opService;
 
-    private BasicData basicData;
+    private BasicSettings basicSettings;
 
     @Override
     public void run() {
@@ -46,8 +37,8 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
         Dialog dialog=new Dialog();
         dialog.run("Data required");
 
-        basicData=dialog.getBasicData();
-        System.out.println("pixelSize:"+basicData.getPixelSize()+"micro m");
+        basicSettings =dialog.getBasicData();
+        System.out.println("pixelSize:"+ basicSettings.getPixelSize()+"micro m");
         DirectoryChooser dc = new DirectoryChooser("Choose directory");
 
         String directory=dc.getDirectory();
