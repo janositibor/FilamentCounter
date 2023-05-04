@@ -111,8 +111,8 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
         if(indexOfLastDot<0){
             return false;
         }
-        System.out.println(fileNameAndPath + "->" + fileNameAndPath.substring(indexOfLastDot+1));
-        return !("csv".equals(fileNameAndPath.substring(indexOfLastDot+1)));
+//        System.out.println(fileNameAndPath + "->" + fileNameAndPath.substring(indexOfLastDot+1));
+        return ("tif".equals(fileNameAndPath.substring(indexOfLastDot+1)));
     }
 
     private void writeResultFromADirectory(String directoryName) {
