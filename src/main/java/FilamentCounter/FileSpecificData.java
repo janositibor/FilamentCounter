@@ -2,9 +2,11 @@ package FilamentCounter;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.Roi;
 import ij.io.FileInfo;
 import ij.io.FileOpener;
 import ij.io.Opener;
+import ij.process.FloatPolygon;
 import io.scif.Metadata;
 import io.scif.config.SCIFIOConfig;
 import io.scif.services.DatasetIOService;
@@ -18,10 +20,12 @@ import org.scijava.io.location.Location;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.PluginInfo;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileSpecificData {
@@ -41,16 +45,37 @@ public class FileSpecificData {
     Opener opener = new Opener();
     private ImagePlus image;
 
+    private Roi roi;
+
+    private List<Coordinates> RoiCoordinatesList=new ArrayList<>();
+
+
 
     public FileSpecificData(String fileNameAndPath) {
         this.fileNameAndPath = fileNameAndPath;
         loadImage();
         enhance();
+        setRoi();
+        setRoiCoordinates();
     }
 
     private void loadImage() {
         image = opener.openImage(fileNameAndPath);
         image.show();
+    }
+
+    private void setRoiCoordinates(){
+//        Polygon boundary=roi.getConvexHull();
+        Polygon boundary=roi.getPolygon();
+
+        for (int i=0;i<boundary.npoints;i++) {
+            System.out.println(boundary.xpoints[i]+"; "+boundary.ypoints[i]);
+        }
+
+    }
+
+    private void setRoi(){
+        roi=image.getRoi();
     }
 
     private void enhance(){
