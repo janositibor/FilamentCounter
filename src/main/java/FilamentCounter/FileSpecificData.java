@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FileSpecificData {
@@ -47,7 +49,12 @@ public class FileSpecificData {
 
     private Roi roi;
 
-    private List<Coordinates> RoiCoordinatesList=new ArrayList<>();
+    private List<Line> sides =new ArrayList<>();
+    private Line controlLine1;
+    private Line controlLine2;
+
+    private List<Line> linesToCalculateFilaments =new ArrayList<>();
+
 
 
 
@@ -57,6 +64,21 @@ public class FileSpecificData {
         enhance();
         setRoi();
         setRoiCoordinates();
+        setControlLines();
+        setLinesToCalculateFilaments();
+    }
+
+    private void setLinesToCalculateFilaments() {
+        Line line;
+        for (int i = 0; i <BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS-1; i++) {
+            line=new Line(controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS),controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS));
+            linesToCalculateFilaments.add(line);
+        }
+    }
+
+    private void setControlLines() {
+        controlLine1=new Line(sides.get(0).getBegin(),sides.get(1).getEnd());
+        controlLine2=new Line(sides.get(1).getBegin(),sides.get(0).getEnd());
     }
 
     private void loadImage() {
@@ -65,13 +87,21 @@ public class FileSpecificData {
     }
 
     private void setRoiCoordinates(){
-//        Polygon boundary=roi.getConvexHull();
         Polygon boundary=roi.getPolygon();
+        Coordinates begin;
+        Coordinates end;
+        Line line;
 
-        for (int i=0;i<boundary.npoints;i++) {
-            System.out.println(boundary.xpoints[i]+"; "+boundary.ypoints[i]);
+        for (int i=0;i<boundary.npoints-1;i++) {
+//            System.out.println(boundary.xpoints[i]+"; "+boundary.ypoints[i]);
+            begin=new Coordinates(boundary.xpoints[i],boundary.ypoints[i]);
+            end=new Coordinates(boundary.xpoints[i+1],boundary.ypoints[i+1]);
+            line=new Line(begin,end);
+            sides.add(line);
         }
-
+        Collections.sort(sides);
+        System.out.println(sides.get(0).getLength());
+        System.out.println(sides.get(1).getLength());
     }
 
     private void setRoi(){

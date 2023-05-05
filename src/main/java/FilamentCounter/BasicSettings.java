@@ -1,6 +1,7 @@
 package FilamentCounter;
 
 public class BasicSettings {
+    static int NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS=5;
     private double pixelSize;
     private String directoryName;
     private PeakCounterSettings peakCounterSettings;
