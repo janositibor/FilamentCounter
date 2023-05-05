@@ -1,13 +1,19 @@
 package FilamentCounter;
 
-public class Line implements Comparable<Line>{
+public class LineForFilamentsCounter implements Comparable<LineForFilamentsCounter>{
     private Coordinates begin;
     private Coordinates end;
     private double length;
 
-    public Line(Coordinates begin, Coordinates end) {
+    public LineForFilamentsCounter(Coordinates begin, Coordinates end) {
         this.begin = begin;
         this.end = end;
+        calculateLength();
+    }
+
+    public void shrink(int percent) {
+        begin=equalPartCoordinates(percent,2*100);
+        end=equalPartCoordinates((200-percent),2*100);
         calculateLength();
     }
 
@@ -18,13 +24,14 @@ public class Line implements Comparable<Line>{
     }
 
     public Coordinates equalPartCoordinates(int nth,int total){
-        double x=begin.getX()+((end.getX()- begin.getX())*(nth/total));
-        double y=begin.getY()+((end.getY()- begin.getY())*(nth/total));
+        double x=begin.getX()+((end.getX()- begin.getX())*(1.0*nth/total));
+        double y=begin.getY()+((end.getY()- begin.getY())*(1.0*nth/total));
+//        System.out.println(nth+": "+x+" "+y);
         return new Coordinates(x,y);
     }
 
     @Override
-    public int compareTo(Line o) {
+    public int compareTo(LineForFilamentsCounter o) {
         double difference=o.getLength()-this.getLength();
         return (int)(difference/Math.abs(difference));
     }
@@ -39,5 +46,13 @@ public class Line implements Comparable<Line>{
 
     public double getLength() {
         return length;
+    }
+
+    @Override
+    public String toString() {
+        return "LineForFilamentsCounter{" +
+                "begin=" + begin +
+                ", end=" + end +
+                '}';
     }
 }

@@ -3,9 +3,12 @@ package FilamentCounter;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.Roi;
+import ij.gui.Line;
 import ij.io.FileInfo;
 import ij.io.FileOpener;
+import ij.io.FileSaver;
 import ij.io.Opener;
+import ij.plugin.frame.RoiManager;
 import ij.process.FloatPolygon;
 import io.scif.Metadata;
 import io.scif.config.SCIFIOConfig;
@@ -34,6 +37,9 @@ public class FileSpecificData {
 
     static final String SEPARATOR=";";
     private String fileNameAndPath;
+    private String fileName;
+    private String extension;
+
     private double length=0;
     private double filamentDensity=0;
     private ImageJ imageJ=new ImageJ();
@@ -49,36 +55,96 @@ public class FileSpecificData {
 
     private Roi roi;
 
-    private List<Line> sides =new ArrayList<>();
-    private Line controlLine1;
-    private Line controlLine2;
+    private List<LineForFilamentsCounter> sides =new ArrayList<>();
+    private LineForFilamentsCounter controlLine1;
+    private LineForFilamentsCounter controlLine2;
 
-    private List<Line> linesToCalculateFilaments =new ArrayList<>();
+    private List<LineForFilamentsCounter> linesToCalculateFilaments =new ArrayList<>();
 
-
+    RoiManager roiManager = new RoiManager();
 
 
     public FileSpecificData(String fileNameAndPath) {
         this.fileNameAndPath = fileNameAndPath;
+        setFileName();
+        setExtension();
         loadImage();
         enhance();
         setRoi();
         setRoiCoordinates();
         setControlLines();
         setLinesToCalculateFilaments();
+        getProfiles();
+        saveUsedRois();
+    }
+
+    private void setFileName(){
+        int indexOfLastSlash=fileNameAndPath.lastIndexOf("/");
+        if(indexOfLastSlash<0){
+            indexOfLastSlash=fileNameAndPath.lastIndexOf("\\");
+        }
+        fileName=fileNameAndPath.substring(indexOfLastSlash+1);
+    }
+
+    private void setExtension(){
+        int indexOfLastDot=fileNameAndPath.lastIndexOf(".");
+        if(indexOfLastDot<0){
+            extension="";
+        }
+//        System.out.println(fileNameAndPath + "->" + fileNameAndPath.substring(indexOfLastDot+1));
+        extension=fileNameAndPath.substring(indexOfLastDot+1);
+    }
+    private void saveUsedRois() {
+//        for (int i = 0; i < roiManager.getCount(); i++) {
+//            // get roi line profile and add to results table
+//            image.setRoi(roiManager.getRoi(i));
+//
+////            profiler = new ProfilePlot(imp)
+////            profile = profiler.getProfile()
+////            for (j = 0; j < profile.length; j++)
+////                rt.setValue("line" + i, j, profile[j])
+//        }
+        roiManager.runCommand("Show All");
+        ImagePlus imp=image.flatten();
+        String newNameAndPath=fileNameAndPath.replace(fileName,"ROIs_"+fileName).replace(extension,"bmp");
+        IJ.saveAs(imp, "BMP", newNameAndPath);
+    }
+
+    private void getProfiles() {
+//        for (int i = 0; i < roiManager.getCount(); i++) {
+//            // get roi line profile and add to results table
+//            image.setRoi(roiManager.getRoi(i));
+//
+////            profiler = new ProfilePlot(imp)
+////            profile = profiler.getProfile()
+////            for (j = 0; j < profile.length; j++)
+////                rt.setValue("line" + i, j, profile[j])
+//        }
     }
 
     private void setLinesToCalculateFilaments() {
-        Line line;
-        for (int i = 0; i <BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS-1; i++) {
-            line=new Line(controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS),controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS));
+        Coordinates begin;
+        Coordinates end;
+        LineForFilamentsCounter line;
+        for (int i = 0; i <BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS; i++) {
+            begin=controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
+            end=controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
+            line=new LineForFilamentsCounter(begin,end);
+            System.out.println(line);
+            line.shrink(10);
+            System.out.println("Shrink után:");
+            System.out.println(line);
             linesToCalculateFilaments.add(line);
+
+            image.setRoi(new Line(line.getBegin().getX(),line.getBegin().getY(),line.getEnd().getX(),line.getEnd().getY()));
+            roiManager.addRoi(image.getRoi());
+//            image.show();
         }
     }
 
     private void setControlLines() {
-        controlLine1=new Line(sides.get(0).getBegin(),sides.get(1).getEnd());
-        controlLine2=new Line(sides.get(1).getBegin(),sides.get(0).getEnd());
+        controlLine1=new LineForFilamentsCounter(sides.get(0).getBegin(),sides.get(1).getEnd());
+        controlLine2=new LineForFilamentsCounter(sides.get(0).getEnd(),sides.get(1).getBegin());
     }
 
     private void loadImage() {
@@ -90,18 +156,19 @@ public class FileSpecificData {
         Polygon boundary=roi.getPolygon();
         Coordinates begin;
         Coordinates end;
-        Line line;
+        LineForFilamentsCounter line;
 
         for (int i=0;i<boundary.npoints-1;i++) {
 //            System.out.println(boundary.xpoints[i]+"; "+boundary.ypoints[i]);
             begin=new Coordinates(boundary.xpoints[i],boundary.ypoints[i]);
             end=new Coordinates(boundary.xpoints[i+1],boundary.ypoints[i+1]);
-            line=new Line(begin,end);
+            line=new LineForFilamentsCounter(begin,end);
+//            System.out.println("oldal"+i+": "+line);
             sides.add(line);
         }
         Collections.sort(sides);
-        System.out.println(sides.get(0).getLength());
-        System.out.println(sides.get(1).getLength());
+//        System.out.println(sides.get(0).getLength());
+//        System.out.println(sides.get(1).getLength());
     }
 
     private void setRoi(){
@@ -125,7 +192,7 @@ public class FileSpecificData {
             parameters += " fast_(less_accurate)";
 
         ij.run(image,"Enhance Local Contrast (CLAHE)", parameters );
-        image.show();
+//        image.show();
     }
 
     public String getFileNameAndPath() {
