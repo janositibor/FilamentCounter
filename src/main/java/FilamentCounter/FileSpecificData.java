@@ -2,12 +2,15 @@ package FilamentCounter;
 
 import ij.IJ;
 import ij.ImagePlus;
+import ij.gui.Plot;
+import ij.gui.ProfilePlot;
 import ij.gui.Roi;
 import ij.gui.Line;
 import ij.io.FileInfo;
 import ij.io.FileOpener;
 import ij.io.FileSaver;
 import ij.io.Opener;
+import ij.plugin.Profiler;
 import ij.plugin.frame.RoiManager;
 import ij.process.FloatPolygon;
 import io.scif.Metadata;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import ij.measure.ResultsTable;
 
 public class FileSpecificData {
 
@@ -61,7 +65,10 @@ public class FileSpecificData {
 
     private List<LineForFilamentsCounter> linesToCalculateFilaments =new ArrayList<>();
 
-    RoiManager roiManager = new RoiManager();
+    private RoiManager roiManager = new RoiManager();
+
+    private ResultsTable resultsTable = new ResultsTable();
+
 
 
     public FileSpecificData(String fileNameAndPath) {
@@ -95,31 +102,65 @@ public class FileSpecificData {
         extension=fileNameAndPath.substring(indexOfLastDot+1);
     }
     private void saveUsedRois() {
-//        for (int i = 0; i < roiManager.getCount(); i++) {
-//            // get roi line profile and add to results table
+//        IJ.run(image, "Properties... ", "  width=20");
+
+        for (int i = 0; i < roiManager.getCount(); i++) {
+            // get roi line profile and add to results table
 //            image.setRoi(roiManager.getRoi(i));
-//
-////            profiler = new ProfilePlot(imp)
-////            profile = profiler.getProfile()
-////            for (j = 0; j < profile.length; j++)
-////                rt.setValue("line" + i, j, profile[j])
-//        }
-        roiManager.runCommand("Show All");
-        ImagePlus imp=image.flatten();
+            roiManager.select(image,i);
+            IJ.run(image, "Properties... ", "  width=10");
+            image=image.flatten();
+
+//            profiler = new ProfilePlot(imp)
+//            profile = profiler.getProfile()
+//            for (j = 0; j < profile.length; j++)
+//                rt.setValue("line" + i, j, profile[j])
+        }
+//        roiManager.runCommand(image,"Deselect");
+//        roiManager.select(2);
+
+//        roiManager.deselect();
+//        roiManager.setSelectedIndexes(new int[]{0,1,2,3,4});
+//        roiManager.select(image,2);
+//        IJ.run(image, "Properties... ", "  width=20");
+//         image=image.flatten();
+//        roiManager.select(image,4);
+//        IJ.run(image, "Properties... ", "  width=20");
+//        image=image.flatten();
+
+//        roiManager.runCommand("Show All");
+//        ImagePlus imp=image.flatten();
         String newNameAndPath=fileNameAndPath.replace(fileName,"ROIs_"+fileName).replace(extension,"bmp");
-        IJ.saveAs(imp, "BMP", newNameAndPath);
+        IJ.saveAs(image, "BMP", newNameAndPath);
     }
 
     private void getProfiles() {
+        ProfilePlot profiler = new ProfilePlot(image);
+//        double[] profile;
+//        ImagePlus plot;
+//
 //        for (int i = 0; i < roiManager.getCount(); i++) {
 //            // get roi line profile and add to results table
 //            image.setRoi(roiManager.getRoi(i));
 //
-////            profiler = new ProfilePlot(imp)
-////            profile = profiler.getProfile()
-////            for (j = 0; j < profile.length; j++)
-////                rt.setValue("line" + i, j, profile[j])
+//            profile = profiler.getProfile();
+//            for (int j = 0; j < profile.length; j++) {
+//                resultsTable.setValue("line" + i, j, profile[j]);
+//            }
+//            plot=Plot(profile);
 //        }
+//        System.out.println(resultsTable);
+
+        roiManager.deselect();
+        profiler.getProfile();
+        profiler.createWindow();
+
+//        roiManager.runCommand("Select All");
+//        profile = getProfile();
+//
+//        Plot.create("Intensity Profile", "Distance in Pixels", "Intensity", profile);
+//        Plot.setLimits(0, profile.length, 0, 256);
+
     }
 
     private void setLinesToCalculateFilaments() {
@@ -130,10 +171,10 @@ public class FileSpecificData {
             begin=controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             end=controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             line=new LineForFilamentsCounter(begin,end);
-            System.out.println(line);
+//            System.out.println(line);
             line.shrink(10);
-            System.out.println("Shrink után:");
-            System.out.println(line);
+//            System.out.println("Shrink után:");
+//            System.out.println(line);
             linesToCalculateFilaments.add(line);
 
             image.setRoi(new Line(line.getBegin().getX(),line.getBegin().getY(),line.getEnd().getX(),line.getEnd().getY()));
