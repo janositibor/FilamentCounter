@@ -73,6 +73,9 @@ public class FileSpecificData {
 
     public FileSpecificData(String fileNameAndPath) {
         this.fileNameAndPath = fileNameAndPath;
+//        roiManager = new RoiManager();
+//        System.out.println("RoiManager konstruktor meghívva");
+        roiManager.setVisible(true);
         setFileName();
         setExtension();
         loadImage();
@@ -83,6 +86,12 @@ public class FileSpecificData {
         setLinesToCalculateFilaments();
         getProfiles();
         saveUsedRois();
+        closeFile();
+    }
+
+    private void closeFile() {
+        image.clone();
+        roiManager.close();
     }
 
     private void setFileName(){
@@ -164,10 +173,13 @@ public class FileSpecificData {
     }
 
     private void setLinesToCalculateFilaments() {
+        System.out.println("setLinesToCalculateFilaments");
         Coordinates begin;
         Coordinates end;
         LineForFilamentsCounter line;
+        System.out.println(roiManager);
         for (int i = 0; i <BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS; i++) {
+            System.out.println(i);
             begin=controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             end=controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             line=new LineForFilamentsCounter(begin,end);
@@ -178,6 +190,7 @@ public class FileSpecificData {
             linesToCalculateFilaments.add(line);
 
             image.setRoi(new Line(line.getBegin().getX(),line.getBegin().getY(),line.getEnd().getX(),line.getEnd().getY()));
+            System.out.println(image.getRoi());
             roiManager.addRoi(image.getRoi());
 //            image.show();
         }
