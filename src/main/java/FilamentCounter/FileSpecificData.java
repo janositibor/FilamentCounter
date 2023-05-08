@@ -2,10 +2,7 @@ package FilamentCounter;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.gui.Plot;
-import ij.gui.ProfilePlot;
-import ij.gui.Roi;
-import ij.gui.Line;
+import ij.gui.*;
 import ij.io.FileInfo;
 import ij.io.FileOpener;
 import ij.io.FileSaver;
@@ -35,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import ij.measure.ResultsTable;
 
 public class FileSpecificData {
@@ -145,24 +145,45 @@ public class FileSpecificData {
 
     private void getProfiles() {
         ProfilePlot profiler = new ProfilePlot(image);
-//        double[] profile;
+        double[] profile;
 //        ImagePlus plot;
-//
-//        for (int i = 0; i < roiManager.getCount(); i++) {
-//            // get roi line profile and add to results table
-//            image.setRoi(roiManager.getRoi(i));
-//
-//            profile = profiler.getProfile();
-//            for (int j = 0; j < profile.length; j++) {
-//                resultsTable.setValue("line" + i, j, profile[j]);
-//            }
+        List<Double> totalProfile=new ArrayList<>();
+//        double[] totalProfile=new double[]{};
+        for (int i = 0; i < roiManager.getCount(); i++) {
+            // get roi line profile and add to results table
+            image.setRoi(roiManager.getRoi(i));
+
+            profile = profiler.getProfile();
+            for (int j = 0; j < profile.length; j++) {
+                resultsTable.setValue("line" + i, j, profile[j]);
+                totalProfile.add(profile[j]);
+            }
 //            plot=Plot(profile);
-//        }
+        }
+//        System.out.println(totalProfile);
+        System.out.println("Total length: "+totalProfile.size());
+//        double[] yValues = totalProfile.toArray();
+        double[] xValues = IntStream.rangeClosed(1, totalProfile.size()).mapToDouble(i->1.0*i).toArray();
+        double[] yValues = totalProfile.stream().mapToDouble(d -> d).toArray();
+
+//        Plot.create("Simple Plot", "X", "Y", yValues);
+        Plot plot=new Plot("Intensity profile","Distance (pixel)","Intensity",xValues,yValues);
+
+        //        java.lang.String title, java.lang.String xLabel, java.lang.String yLabel, double[] xValues, double[] yValues
+        plot.draw();
+//        plot.show();
+        ImagePlus plotImage=plot.getImagePlus();
+        String newNameAndPath=fileNameAndPath.replace(fileName,"IntensityProfile_"+fileName).replace(extension,"bmp");
+        IJ.saveAs(plotImage, "BMP", newNameAndPath);
+
+//        resultsTable.show("results");
 //        System.out.println(resultsTable);
 
-        roiManager.deselect();
-        profiler.getProfile();
-        profiler.createWindow();
+//        roiManager.deselect();
+//        profiler.getProfile();
+//        profiler.createWindow();
+
+//        roiManager.runCommand(image,"Multi Plot");
 
 //        roiManager.runCommand("Select All");
 //        profile = getProfile();
@@ -173,13 +194,10 @@ public class FileSpecificData {
     }
 
     private void setLinesToCalculateFilaments() {
-        System.out.println("setLinesToCalculateFilaments");
         Coordinates begin;
         Coordinates end;
         LineForFilamentsCounter line;
-        System.out.println(roiManager);
         for (int i = 0; i <BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS; i++) {
-            System.out.println(i);
             begin=controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             end=controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             line=new LineForFilamentsCounter(begin,end);
@@ -190,10 +208,10 @@ public class FileSpecificData {
             linesToCalculateFilaments.add(line);
 
             image.setRoi(new Line(line.getBegin().getX(),line.getBegin().getY(),line.getEnd().getX(),line.getEnd().getY()));
-            System.out.println(image.getRoi());
             roiManager.addRoi(image.getRoi());
 //            image.show();
         }
+//        roiManager.save(fileNameAndPath+"_roi.zip");
     }
 
     private void setControlLines() {
