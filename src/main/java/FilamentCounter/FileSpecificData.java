@@ -69,6 +69,10 @@ public class FileSpecificData {
 
     private ResultsTable resultsTable = new ResultsTable();
 
+    private double[] xValues;
+    private double[] yValues;
+    List<Integer> limitsList=new ArrayList<>();
+
 
 
     public FileSpecificData(String fileNameAndPath) {
@@ -85,8 +89,16 @@ public class FileSpecificData {
         setControlLines();
         setLinesToCalculateFilaments();
         getProfiles();
+        findPeaks();
         saveUsedRois();
         closeFile();
+    }
+
+    private void findPeaks() {
+        BarFindPeaks barFindPeaks=new BarFindPeaks(0d,0d,200);
+        barFindPeaks.setXvalues(xValues);
+        barFindPeaks.setYvalues(yValues);
+        barFindPeaks.run();
     }
 
     private void closeFile() {
@@ -164,12 +176,11 @@ public class FileSpecificData {
 //        System.out.println(totalProfile);
         System.out.println("Total length: "+totalProfile.size());
 //        double[] yValues = totalProfile.toArray();
-        double[] xValues = IntStream.rangeClosed(1, totalProfile.size()).mapToDouble(i->1.0*i).toArray();
-        double[] yValues = totalProfile.stream().mapToDouble(d -> d).toArray();
+        xValues = IntStream.rangeClosed(1, totalProfile.size()).mapToDouble(i->1.0*i).toArray();
+        yValues = totalProfile.stream().mapToDouble(d -> 255.0-d).toArray();
 
 //        Plot.create("Simple Plot", "X", "Y", yValues);
         System.out.println(resultsTable.getLastColumn());
-        List<Integer> limitsList=new ArrayList<>();
         for (int i = 0; i <resultsTable.getLastColumn(); i++) {
             if(i==0){
                 limitsList.add(resultsTable.getColumnAsDoubles(i).length);
