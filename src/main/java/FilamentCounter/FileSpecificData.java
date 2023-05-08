@@ -144,7 +144,7 @@ public class FileSpecificData {
     }
 
     private void getProfiles() {
-        ProfilePlot profiler = new ProfilePlot(image);
+        ProfilePlot profiler ;
         double[] profile;
 //        ImagePlus plot;
         List<Double> totalProfile=new ArrayList<>();
@@ -152,14 +152,15 @@ public class FileSpecificData {
         for (int i = 0; i < roiManager.getCount(); i++) {
             // get roi line profile and add to results table
             image.setRoi(roiManager.getRoi(i));
-
+            profiler = new ProfilePlot(image);
             profile = profiler.getProfile();
             for (int j = 0; j < profile.length; j++) {
                 resultsTable.setValue("line" + i, j, profile[j]);
                 totalProfile.add(profile[j]);
             }
-//            plot=Plot(profile);
         }
+//        resultsTable.show("ResultsTable");
+
 //        System.out.println(totalProfile);
         System.out.println("Total length: "+totalProfile.size());
 //        double[] yValues = totalProfile.toArray();
