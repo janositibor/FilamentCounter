@@ -167,9 +167,29 @@ public class FileSpecificData {
         double[] yValues = totalProfile.stream().mapToDouble(d -> d).toArray();
 
 //        Plot.create("Simple Plot", "X", "Y", yValues);
-        Plot plot=new Plot("Intensity profile","Distance (pixel)","Intensity",xValues,yValues);
+        System.out.println(resultsTable.getLastColumn());
+        List<Integer> limitsList=new ArrayList<>();
+        for (int i = 0; i <resultsTable.getLastColumn(); i++) {
+            if(i==0){
+                limitsList.add(resultsTable.getColumnAsDoubles(i).length);
+            }
+            else{
+                limitsList.add(limitsList.get(i-1)+resultsTable.getColumnAsDoubles(i).length);
+            }
+        }
+//        int limit = resultsTable.getColumn(0);
+        Plot plot=new Plot("Intensity profile","Distance (pixel)","Intensity");
 
+        plot.setColor(Color.BLACK);
+        plot.add("line",xValues,yValues);
         //        java.lang.String title, java.lang.String xLabel, java.lang.String yLabel, double[] xValues, double[] yValues
+//        plot.add("line",new double[]{2800.1,2800.2},new double[]{0,255});
+        for (int i = 0; i < limitsList.size(); i++) {
+            plot.setColor(Color.RED);
+            plot.add("line",new double[]{limitsList.get(i),limitsList.get(i)},new double[]{0,255});
+        }
+//        plot.setColor(Color.RED);
+//        plot.add("line",new double[]{0.1,12800.2},new double[]{0,255});
         plot.draw();
 //        plot.show();
         ImagePlus plotImage=plot.getImagePlus();
