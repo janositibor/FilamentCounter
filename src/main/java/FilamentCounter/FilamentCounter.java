@@ -3,12 +3,9 @@ package FilamentCounter;
 import FilamentCounter.modell.BasicSettings;
 import FilamentCounter.modell.FileResultDTO;
 import ij.io.DirectoryChooser;
-import net.imagej.ops.OpService;
 import net.imglib2.type.numeric.RealType;
 import org.scijava.command.Command;
-import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
-import org.scijava.ui.UIService;
 
 
 import java.io.File;
@@ -22,12 +19,6 @@ import java.util.List;
 
 @Plugin(type = Command.class, menuPath = "Plugins>Filament Counter")
 public class FilamentCounter<T extends RealType<T>> implements Command {
-    @Parameter
-    private UIService uiService;
-
-    @Parameter
-    private OpService opService;
-
     private BasicSettings basicSettings;
     private List<FileResultDTO> resultList=new ArrayList<>();
 
@@ -78,7 +69,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
     }
 
     private void writeResultFromADirectory(String directoryName) {
-        if(resultList.size()>0) {
+        if(!resultList.isEmpty()) {
             List<String> writeOutArray = new ArrayList<>(Arrays.asList(
                     "Date and time: " + LocalDateTime.now(),
                     Dialog.PARAMETER1_NAME + ": " + basicSettings.getPixelSize(),
@@ -86,7 +77,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
                     Dialog.PARAMETER3_NAME + ": " + basicSettings.getSettingForCalculation().getMinHeight(),
                     Dialog.PARAMETER4_NAME + ": " + basicSettings.getSettingForCalculation().getMinDistance(),
                     "",
-                    "Filename and path" + FileResultDTO.SEPARATOR + "Length (microm)" + FileResultDTO.SEPARATOR + "Number of Filaments" + FileResultDTO.SEPARATOR + "Filament Density (1/microm)"
+                    "Filename and path" + FileResultDTO.SEPARATOR + "Length (microm)" + FileResultDTO.SEPARATOR + "Number of Filaments" + FileResultDTO.SEPARATOR + "Filaments density (1/microm)"
             ));
 
             for (int i = 0; i < resultList.size(); i++) {
