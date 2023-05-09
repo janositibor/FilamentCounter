@@ -1,9 +1,6 @@
 package FilamentCounter;
 
-import FilamentCounter.modell.Coordinates;
-import FilamentCounter.modell.FoundPeaksDTO;
-import FilamentCounter.modell.LineForFilamentsCounter;
-import FilamentCounter.modell.SettingForCalculationDTO;
+import FilamentCounter.modell.*;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.*;
@@ -59,6 +56,7 @@ public class FileSpecificData {
     private List<Double> limitsList=new ArrayList<>();
     private Plot IntensityProfilePlot;
     private SettingForCalculationDTO settingForCalculation;
+    private ImageWindow imageWindow;
 
 
 
@@ -102,7 +100,7 @@ public class FileSpecificData {
     }
 
     private void findPeaks() {
-        BarFindPeaks barFindPeaks=new BarFindPeaks(0d,0d,200);
+        BarFindPeaks barFindPeaks=new BarFindPeaks(settingForCalculation.getAmplitude(),settingForCalculation.getMinDistance(), settingForCalculation.getMinHeight());
         barFindPeaks.setXvalues(xValues);
         barFindPeaks.setYvalues(yValues);
 
@@ -112,8 +110,11 @@ public class FileSpecificData {
     }
 
     private void closeFile() {
-        image.clone();
         roiManager.close();
+        image.hide();
+        image.close();
+        imageWindow.close();
+
     }
 
     private void setFileName(){
@@ -241,7 +242,7 @@ public class FileSpecificData {
         Coordinates begin;
         Coordinates end;
         LineForFilamentsCounter line;
-        for (int i = 0; i <BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS; i++) {
+        for (int i = 0; i < BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS; i++) {
             begin=controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             end=controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
             line=new LineForFilamentsCounter(begin,end);
@@ -255,7 +256,7 @@ public class FileSpecificData {
             roiManager.addRoi(image.getRoi());
 //            image.show();
         }
-//        roiManager.save(fileNameAndPath+"_roi.zip");
+        roiManager.save(fileNameAndPath+"_roi.zip");
     }
 
     private void setControlLines() {
@@ -265,6 +266,7 @@ public class FileSpecificData {
 
     private void loadImage() {
         image = opener.openImage(fileNameAndPath);
+        imageWindow=new ImageWindow(image);
         image.show();
     }
 

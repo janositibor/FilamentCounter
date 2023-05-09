@@ -1,6 +1,6 @@
 package FilamentCounter;
 
-//import javafx.stage.DirectoryChooser;
+import FilamentCounter.modell.BasicSettings;
 import ij.io.DirectoryChooser;
 import net.imagej.ops.OpService;
 import net.imglib2.type.numeric.RealType;
@@ -21,13 +21,6 @@ import java.util.List;
 
 @Plugin(type = Command.class, menuPath = "Plugins>Filament Counter")
 public class FilamentCounter<T extends RealType<T>> implements Command {
-    //
-    // Feel free to add more parameters here...
-    //
-
-//    @Parameter
-//    private Dataset currentData;
-
     @Parameter
     private UIService uiService;
 
@@ -39,14 +32,11 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
 
     @Override
     public void run() {
-//        Opener fo = new Opener();
-
-
         Dialog dialog=new Dialog();
-        dialog.run("Data required");
+        dialog.run("Required data for peak identification");
 
         basicSettings =dialog.getBasicData();
-        System.out.println("pixelSize:"+ basicSettings.getPixelSize()+"micro m");
+        System.out.println("pixelSize:"+ basicSettings.getPixelSize()+" micro m");
         DirectoryChooser dc = new DirectoryChooser("Choose directory");
 
         String directory=dc.getDirectory();

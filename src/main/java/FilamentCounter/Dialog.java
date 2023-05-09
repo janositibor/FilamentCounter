@@ -1,5 +1,6 @@
 package FilamentCounter;
 
+import FilamentCounter.modell.BasicSettings;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 
@@ -12,7 +13,6 @@ import java.util.List;
 
 public class Dialog implements PlugIn {
     static String PARAMETER_FILE_AND_PATH="C:\\ProgramData\\Fiji\\FilamentCounter\\params.txt";
-    static String DEFAULT_TITLE="Example";
     static double DEFAULT_PIXELSIZE=1.3;
     static double DEFAULT_ALPHA=3.3;
     static double DEFAULT_BETA=4.5;
@@ -23,7 +23,6 @@ public class Dialog implements PlugIn {
     static final String PARAMETER3_NAME="Minimal height of a peak";
     static final String PARAMETER4_NAME="Minimal distance between peaks";
 
-    private String title=DEFAULT_TITLE;
     private double pixelSize=DEFAULT_PIXELSIZE;
     private double alpha=DEFAULT_ALPHA;
     private double beta=DEFAULT_BETA;
@@ -33,19 +32,16 @@ public class Dialog implements PlugIn {
     public void run(String arg) {
         loadParameters();
         GenericDialog gd = new GenericDialog(arg);
-        gd.addStringField("Title: ", title);
         gd.addNumericField(PARAMETER1_NAME+": ", pixelSize, 3);
         gd.addNumericField(PARAMETER2_NAME+": ", alpha, 3);
         gd.addNumericField(PARAMETER3_NAME+": ", beta, 3);
         gd.addNumericField(PARAMETER4_NAME+": ", gamma, 3);
         gd.showDialog();
         if (gd.wasCanceled()) return;
-        title = gd.getNextString();
         pixelSize = gd.getNextNumber();
         alpha = gd.getNextNumber();
         beta = gd.getNextNumber();
         gamma = gd.getNextNumber();
-        System.out.println(title+ "= " +pixelSize+" * "+alpha);
         WriteParametersIntoFile();
         basicSettings =new BasicSettings(pixelSize, alpha, beta, gamma);
     }
@@ -76,7 +72,7 @@ public class Dialog implements PlugIn {
     private void processLine(String line) {
         String[] fieldsArray;
         fieldsArray=line.split(":");
-        System.out.println(fieldsArray[0]+": "+fieldsArray[1].trim());
+//        System.out.println(fieldsArray[0]+": "+fieldsArray[1].trim());
         Double value=Double.parseDouble(fieldsArray[1].trim());
         switch(fieldsArray[0]){
             case PARAMETER1_NAME:
