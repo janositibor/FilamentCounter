@@ -37,6 +37,7 @@ public class FileSpecificData {
 
     Opener opener = new Opener();
     private ImagePlus image;
+    private ImagePlus outputImage;
 
     private Roi roi;
 
@@ -73,10 +74,12 @@ public class FileSpecificData {
         setRoiCoordinates();
         setControlLines();
         setLinesToCalculateFilaments();
+        saveUsedRois();
+
         getProfiles();
         findPeaks();
         finalizeIntensityProfile();
-        saveUsedRois();
+//        saveUsedRois();
         closeFile();
     }
 
@@ -134,13 +137,13 @@ public class FileSpecificData {
     }
     private void saveUsedRois() {
 //        IJ.run(image, "Properties... ", "  width=20");
-
+        outputImage=(ImagePlus) image.clone();
         for (int i = 0; i < roiManager.getCount(); i++) {
             // get roi line profile and add to results table
 //            image.setRoi(roiManager.getRoi(i));
-            roiManager.select(image,i);
-            IJ.run(image, "Properties... ", "  width=10");
-            image=image.flatten();
+            roiManager.select(outputImage,i);
+            IJ.run(outputImage, "Properties... ", "  width=10");
+            outputImage=outputImage.flatten();
 
 //            profiler = new ProfilePlot(imp)
 //            profile = profiler.getProfile()
@@ -162,7 +165,7 @@ public class FileSpecificData {
 //        roiManager.runCommand("Show All");
 //        ImagePlus imp=image.flatten();
         String newNameAndPath=fileNameAndPath.replace(fileName,"ROIs_"+fileName).replace(extension,"bmp");
-        IJ.saveAs(image, "BMP", newNameAndPath);
+        IJ.saveAs(outputImage, "BMP", newNameAndPath);
     }
 
     private void getProfiles() {
