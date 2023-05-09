@@ -56,7 +56,7 @@ public class FileSpecificData {
 
     private double[] xValues;
     private double[] yValues;
-    private List<Integer> limitsList=new ArrayList<>();
+    private List<Double> limitsList=new ArrayList<>();
     private Plot IntensityProfilePlot;
     private SettingForCalculationDTO settingForCalculation;
 
@@ -193,14 +193,14 @@ public class FileSpecificData {
 
 //        Plot.create("Simple Plot", "X", "Y", yValues);
 //        System.out.println(resultsTable.getLastColumn());
-//        for (int i = 0; i <resultsTable.getLastColumn(); i++) {
-//            if(i==0){
-//                limitsList.add(resultsTable.getColumnAsDoubles(i).length);
-//            }
-//            else{
-//                limitsList.add(limitsList.get(i-1)+resultsTable.getColumnAsDoubles(i).length);
-//            }
-//        }
+        for (int i = 0; i <resultsTable.getLastColumn(); i++) {
+            if(i==0){
+                limitsList.add(settingForCalculation.getPixelSize()*resultsTable.getColumnAsDoubles(i).length);
+            }
+            else{
+                limitsList.add(limitsList.get(i-1)+settingForCalculation.getPixelSize()*resultsTable.getColumnAsDoubles(i).length);
+            }
+        }
 ////        int limit = resultsTable.getColumn(0);
 //        Plot plot=new Plot("Intensity profile","Distance (pixel)","Intensity");
 //
