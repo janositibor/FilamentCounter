@@ -311,7 +311,7 @@ public class FileSpecificData {
         if ( fast )
             parameters += " fast_(less_accurate)";
 
-        ij.run(image,"Enhance Local Contrast (CLAHE)", parameters );
+        IJ.run(image,"Enhance Local Contrast (CLAHE)", parameters );
 //        image.show();
     }
 
