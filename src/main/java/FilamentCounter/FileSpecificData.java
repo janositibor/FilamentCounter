@@ -21,7 +21,6 @@ import ij.measure.ResultsTable;
 
 public class FileSpecificData {
 
-    static final String SEPARATOR=";";
     private String fileNameAndPath;
     private String fileName;
     private String extension;
@@ -337,8 +336,7 @@ public class FileSpecificData {
         return 1.0*numberOfPeaks/length;
     }
 
-    @Override
-    public String toString() {
-        return fileNameAndPath + SEPARATOR + length + SEPARATOR + numberOfPeaks + SEPARATOR + getFilamentDensity();
+    public FileResultDTO getResult(){
+        return new FileResultDTO(fileNameAndPath,length,numberOfPeaks);
     }
 }

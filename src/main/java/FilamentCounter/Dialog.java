@@ -18,10 +18,10 @@ public class Dialog implements PlugIn {
     static double DEFAULT_BETA=4.5;
     static double DEFAULT_GAMMA=0.1;
 
-    static final String PARAMETER1_NAME="Pixelsize";
+    static final String PARAMETER1_NAME="Pixelsize (micro m)";
     static final String PARAMETER2_NAME="Amplitude";
     static final String PARAMETER3_NAME="Minimal height of a peak";
-    static final String PARAMETER4_NAME="Minimal distance between peaks";
+    static final String PARAMETER4_NAME="Minimal distance between peaks (micro m)";
 
     private double pixelSize=DEFAULT_PIXELSIZE;
     private double alpha=DEFAULT_ALPHA;

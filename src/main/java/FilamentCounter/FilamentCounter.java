@@ -1,6 +1,7 @@
 package FilamentCounter;
 
 import FilamentCounter.modell.BasicSettings;
+import FilamentCounter.modell.FileResultDTO;
 import ij.io.DirectoryChooser;
 import net.imagej.ops.OpService;
 import net.imglib2.type.numeric.RealType;
@@ -28,50 +29,22 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
     private OpService opService;
 
     private BasicSettings basicSettings;
-    private List<FileSpecificData> resultList=new ArrayList<>();
+    private List<FileResultDTO> resultList=new ArrayList<>();
 
     @Override
     public void run() {
         Dialog dialog=new Dialog();
         dialog.run("Required data for peak identification");
-
         basicSettings =dialog.getBasicData();
-        System.out.println("pixelSize:"+ basicSettings.getPixelSize()+" micro m");
+
         DirectoryChooser dc = new DirectoryChooser("Choose directory");
-
         String directory=dc.getDirectory();
-
-//        LogStream logStream=public LogStream();
         System.out.println(directory);
-
         processDirectory(directory);
-
-//        DirectoryChooser chooser = new DirectoryChooser();
-
-
-//        final Img<T> image = (Img<T>) currentData.getImgPlus();
-//
-//        //
-//        // Enter image processing code here ...
-//        // The following is just a Gauss filtering example
-//        //
-//        final double[] sigmas = {1.0, 3.0, 5.0};
-//
-//        List<RandomAccessibleInterval<T>> results = new ArrayList<>();
-//
-//        for (double sigma : sigmas) {
-//            results.add(opService.filter().gauss(image, sigma));
-//        }
-//
-//        // display result
-//        for (RandomAccessibleInterval<T> elem : results) {
-//            uiService.show(elem);
-//        }
     }
 
     private void processDirectory(String directoryName) {
         File[] content= new File(directoryName).listFiles();
-        
         for(File file:content){
            if(file.isDirectory()){
                processDirectory(file.getAbsolutePath());
@@ -89,7 +62,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
             if(!file.isDirectory() && validFile(file)){
                 System.out.println(" - "+file.getAbsolutePath());
                 fileSpecificData=new FileSpecificData(file.getAbsolutePath(), basicSettings.getSettingForCalculation());
-                resultList.add(fileSpecificData);
+                resultList.add(fileSpecificData.getResult());
             }
         }
         writeResultFromADirectory(directoryName);
@@ -101,7 +74,6 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
         if(indexOfLastDot<0){
             return false;
         }
-//        System.out.println(fileNameAndPath + "->" + fileNameAndPath.substring(indexOfLastDot+1));
         return ("tif".equals(fileNameAndPath.substring(indexOfLastDot+1)));
     }
 
@@ -114,7 +86,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
                     Dialog.PARAMETER3_NAME + ": " + basicSettings.getSettingForCalculation().getMinHeight(),
                     Dialog.PARAMETER4_NAME + ": " + basicSettings.getSettingForCalculation().getMinDistance(),
                     "",
-                    "Filename and path" + FileSpecificData.SEPARATOR + "Length (microm)" + FileSpecificData.SEPARATOR + "Number of Filaments" + FileSpecificData.SEPARATOR + "Filament Density (1/microm)"
+                    "Filename and path" + FileResultDTO.SEPARATOR + "Length (microm)" + FileResultDTO.SEPARATOR + "Number of Filaments" + FileResultDTO.SEPARATOR + "Filament Density (1/microm)"
             ));
 
             for (int i = 0; i < resultList.size(); i++) {
