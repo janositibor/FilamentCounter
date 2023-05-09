@@ -1,28 +1,22 @@
 package FilamentCounter;
 
+import FilamentCounter.modell.FoundPeaksDTO;
 import ij.IJ;
-import ij.ImagePlus;
-import ij.WindowManager;
-import ij.gui.GenericDialog;
-import ij.gui.ImageWindow;
 import ij.gui.Plot;
-import ij.gui.PlotWindow;
 import ij.plugin.filter.MaximumFinder;
-import ij.util.ArrayUtil;
-import ij.util.Tools;
 
 import java.awt.*;
 
 public class BarFindPeaks {
-    double tolerance = 0d;
-    double minPeakDistance =0d;
-    double minMaximaValue = Double.NaN;
-    double maxMinimaValue = -1;
-    boolean excludeOnEdges = false;
+    private double tolerance = 0d;
+    private double minPeakDistance =0d;
+    private double minMaximaValue = Double.NaN;
+    private double maxMinimaValue = -1;
+    private boolean excludeOnEdges = false;
     boolean listValues = false;
 
-    double[] xvalues;
-    double[] yvalues;
+    private double[] xvalues;
+    private double[] yvalues;
 
     public BarFindPeaks(double tolerance, double minPeakDistance, double minMaximaValue) {
         this.tolerance = tolerance;
@@ -38,7 +32,7 @@ public class BarFindPeaks {
         this.yvalues = yvalues;
     }
 
-    int[] findPositions(double[] values, double tolerance, boolean minima) {
+    private int[] findPositions(double[] values, double tolerance, boolean minima) {
         int[] positions = null;
         MaximumFinder maxFinder = new MaximumFinder();
         if (minima)
@@ -48,15 +42,15 @@ public class BarFindPeaks {
         return positions;
     }
 
-    int[] findMaxima(double[] values, double tolerance) {
+    private int[] findMaxima(double[] values, double tolerance) {
         return findPositions(values, tolerance, false);
     }
 
-    int[] findMinima(double[] values, double tolerance) {
+    private int[] findMinima(double[] values, double tolerance) {
         return findPositions(values, tolerance, true);
     }
 
-    double[] getCoordinates(double[] values, int[] positions) {
+    private double[] getCoordinates(double[] values, int[] positions) {
         int size = positions.length;
         double[] cc = new double[size];
         for (int i=0; i<size; i++)
@@ -64,26 +58,9 @@ public class BarFindPeaks {
         return cc;
     }
 
-    boolean prompt() {
-        GenericDialog gd = new GenericDialog("Find Local Maxima/Minima...");
-        gd.addNumericField("Min._peak_amplitude:", tolerance, 2);
-        gd.addNumericField("Min._peak_distance:", minPeakDistance, 2);
-        gd.addNumericField("Min._value of maxima:", minMaximaValue, 2, 6, "(NaN: no filtering)");
-        gd.addNumericField("Max._value of minima:", maxMinimaValue, 2, 6, "(NaN: no filtering)");
-        gd.addCheckbox("Exclude peaks on edges of plot", excludeOnEdges);
-        gd.addCheckbox("List values", listValues);
-        gd.addHelp("http://imagej.net/Find_Peaks");
-        gd.showDialog();
-        tolerance = gd.getNextNumber();
-        minPeakDistance = gd.getNextNumber();
-        minMaximaValue = gd.getNextNumber();
-        maxMinimaValue = gd.getNextNumber();
-        excludeOnEdges = gd.getNextBoolean();
-        listValues = gd.getNextBoolean();
-        return !gd.wasCanceled();
-    }
 
-    int[] trimPeakHeight(int[] positions, boolean minima) {
+
+    private int[] trimPeakHeight(int[] positions, boolean minima) {
         int size1 = positions.length; int size2 = 0;
         for (int i=0; i<size1; i++) {
             if ( filteredHeight(yvalues[positions[i]], minima) )
@@ -97,14 +74,14 @@ public class BarFindPeaks {
         return newpositions;
     }
 
-    boolean filteredHeight(double height, boolean minima) {
+    private boolean filteredHeight(double height, boolean minima) {
         if (minima)
             return (height < maxMinimaValue);
         else
             return (height > minMaximaValue);
     }
 
-    int[] trimPeakDistance(int[] positions) {
+    private int[] trimPeakDistance(int[] positions) {
         int size = positions.length;
         int[] temp = new int[size];
         int newsize = 0;
@@ -125,7 +102,7 @@ public class BarFindPeaks {
     }
 
 
-    void run() {
+    public FoundPeaksDTO run() {
 
 //        PlotWindow pw;
 //
@@ -174,8 +151,10 @@ public class BarFindPeaks {
         plot.addLabel(0.50, 0, "Min. amp.: "+ IJ.d2s(tolerance,2) +"  Min. dx.: "+ IJ.d2s(minPeakDistance,2) );
         plot.setLineWidth(1);
 
-        plot.draw();
-        plot.show();
+//        plot.draw();
+//        plot.show();
+        FoundPeaksDTO output=new FoundPeaksDTO(xMaxima.length,plot);
+        return output;
 
 //        if (plotTitle.startsWith("Peaks in"))
 //            pw.drawPlot(plot);

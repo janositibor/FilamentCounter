@@ -98,7 +98,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
         for(File file:content){
             if(!file.isDirectory() && validFile(file)){
                 System.out.println(" - "+file.getAbsolutePath());
-                fileSpecificData=new FileSpecificData(file.getAbsolutePath());
+                fileSpecificData=new FileSpecificData(file.getAbsolutePath(), basicSettings.getSettingForCalculation());
                 resultList.add(fileSpecificData);
             }
         }
@@ -120,11 +120,11 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
             List<String> writeOutArray = new ArrayList<>(Arrays.asList(
                     "Date and time: " + LocalDateTime.now(),
                     Dialog.PARAMETER1_NAME + ": " + basicSettings.getPixelSize(),
-                    Dialog.PARAMETER2_NAME + ": " + basicSettings.getPeakCounterSettings().getAlpha(),
-                    Dialog.PARAMETER3_NAME + ": " + basicSettings.getPeakCounterSettings().getBeta(),
-                    Dialog.PARAMETER4_NAME + ": " + basicSettings.getPeakCounterSettings().getGamma(),
+                    Dialog.PARAMETER2_NAME + ": " + basicSettings.getSettingForCalculation().getAmplitude(),
+                    Dialog.PARAMETER3_NAME + ": " + basicSettings.getSettingForCalculation().getMinHeight(),
+                    Dialog.PARAMETER4_NAME + ": " + basicSettings.getSettingForCalculation().getMinDistance(),
                     "",
-                    "Filename and path" + FileSpecificData.SEPARATOR + "Length (microm)" + FileSpecificData.SEPARATOR + "Filament Density (1/microm)"
+                    "Filename and path" + FileSpecificData.SEPARATOR + "Length (microm)" + FileSpecificData.SEPARATOR + "Number of Filaments" + FileSpecificData.SEPARATOR + "Filament Density (1/microm)"
             ));
 
             for (int i = 0; i < resultList.size(); i++) {

@@ -1,4 +1,4 @@
-package FilamentCounter;
+package FilamentCounter.modell;
 
 public class LineForFilamentsCounter implements Comparable<LineForFilamentsCounter>{
     private Coordinates begin;

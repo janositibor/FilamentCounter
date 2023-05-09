@@ -1,4 +1,4 @@
-package FilamentCounter;
+package FilamentCounter.modell;
 
 public class Coordinates {
     private double x;

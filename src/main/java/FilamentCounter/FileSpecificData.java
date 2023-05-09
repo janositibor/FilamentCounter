@@ -1,38 +1,23 @@
 package FilamentCounter;
 
+import FilamentCounter.modell.Coordinates;
+import FilamentCounter.modell.FoundPeaksDTO;
+import FilamentCounter.modell.LineForFilamentsCounter;
+import FilamentCounter.modell.SettingForCalculationDTO;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.*;
-import ij.io.FileInfo;
-import ij.io.FileOpener;
-import ij.io.FileSaver;
 import ij.io.Opener;
-import ij.plugin.Profiler;
 import ij.plugin.frame.RoiManager;
-import ij.process.FloatPolygon;
-import io.scif.Metadata;
-import io.scif.config.SCIFIOConfig;
 import io.scif.services.DatasetIOService;
 import io.scif.services.DefaultDatasetIOService;
 import net.imagej.Dataset;
 import net.imagej.ImageJ;
-import org.scijava.Context;
-import org.scijava.command.Command;
-import org.scijava.io.IOService;
-import org.scijava.io.location.Location;
-import org.scijava.plugin.Parameter;
-import org.scijava.plugin.PluginInfo;
 
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import ij.measure.ResultsTable;
@@ -44,8 +29,8 @@ public class FileSpecificData {
     private String fileName;
     private String extension;
 
-    private double length=0;
-    private double filamentDensity=0;
+    private double length=1;
+    private int numberOfPeaks=0;
     private ImageJ imageJ=new ImageJ();
 //    private DatasetIOService datasetIO;
     private IJ ij;
@@ -71,12 +56,15 @@ public class FileSpecificData {
 
     private double[] xValues;
     private double[] yValues;
-    List<Integer> limitsList=new ArrayList<>();
+    private List<Integer> limitsList=new ArrayList<>();
+    private Plot IntensityProfilePlot;
+    private SettingForCalculationDTO settingForCalculation;
 
 
 
-    public FileSpecificData(String fileNameAndPath) {
+    public FileSpecificData(String fileNameAndPath,SettingForCalculationDTO settingForCalculation) {
         this.fileNameAndPath = fileNameAndPath;
+        this.settingForCalculation=settingForCalculation;
 //        roiManager = new RoiManager();
 //        System.out.println("RoiManager konstruktor meghívva");
         roiManager.setVisible(true);
@@ -90,15 +78,37 @@ public class FileSpecificData {
         setLinesToCalculateFilaments();
         getProfiles();
         findPeaks();
+        finalizeIntensityProfile();
         saveUsedRois();
         closeFile();
+    }
+
+    private void finalizeIntensityProfile() {
+        addLimitsToIntensityProfile(IntensityProfilePlot);
+        saveIntensityProfile();
+    }
+
+    private void saveIntensityProfile() {
+        ImagePlus plotImage=IntensityProfilePlot.getImagePlus();
+        String newNameAndPath=fileNameAndPath.replace(fileName,"IntensityProfile_"+fileName).replace(extension,"bmp");
+        IJ.saveAs(plotImage, "BMP", newNameAndPath);
+    }
+
+    private void addLimitsToIntensityProfile(Plot plot) {
+        for (int i = 0; i < limitsList.size(); i++) {
+            plot.setColor(Color.RED);
+            plot.add("line",new double[]{limitsList.get(i),limitsList.get(i)},new double[]{0,255});
+        }
     }
 
     private void findPeaks() {
         BarFindPeaks barFindPeaks=new BarFindPeaks(0d,0d,200);
         barFindPeaks.setXvalues(xValues);
         barFindPeaks.setYvalues(yValues);
-        barFindPeaks.run();
+
+        FoundPeaksDTO foundPeaks=barFindPeaks.run();
+        IntensityProfilePlot=foundPeaks.getIntensityProfileWithSelectedPeaks();
+        setNumberOfPeaks(foundPeaks.getNumberOfPeaks());
     }
 
     private void closeFile() {
@@ -174,39 +184,41 @@ public class FileSpecificData {
 //        resultsTable.show("ResultsTable");
 
 //        System.out.println(totalProfile);
-        System.out.println("Total length: "+totalProfile.size());
+//        System.out.println("Total length: "+totalProfile.size());
 //        double[] yValues = totalProfile.toArray();
-        xValues = IntStream.rangeClosed(1, totalProfile.size()).mapToDouble(i->1.0*i).toArray();
+        xValues = IntStream.rangeClosed(1, totalProfile.size()).mapToDouble(i->settingForCalculation.getPixelSize()*i).toArray();
         yValues = totalProfile.stream().mapToDouble(d -> 255.0-d).toArray();
 
-//        Plot.create("Simple Plot", "X", "Y", yValues);
-        System.out.println(resultsTable.getLastColumn());
-        for (int i = 0; i <resultsTable.getLastColumn(); i++) {
-            if(i==0){
-                limitsList.add(resultsTable.getColumnAsDoubles(i).length);
-            }
-            else{
-                limitsList.add(limitsList.get(i-1)+resultsTable.getColumnAsDoubles(i).length);
-            }
-        }
-//        int limit = resultsTable.getColumn(0);
-        Plot plot=new Plot("Intensity profile","Distance (pixel)","Intensity");
+        setLength(settingForCalculation.getPixelSize()*totalProfile.size());
 
-        plot.setColor(Color.BLACK);
-        plot.add("line",xValues,yValues);
-        //        java.lang.String title, java.lang.String xLabel, java.lang.String yLabel, double[] xValues, double[] yValues
-//        plot.add("line",new double[]{2800.1,2800.2},new double[]{0,255});
-        for (int i = 0; i < limitsList.size(); i++) {
-            plot.setColor(Color.RED);
-            plot.add("line",new double[]{limitsList.get(i),limitsList.get(i)},new double[]{0,255});
-        }
-//        plot.setColor(Color.RED);
-//        plot.add("line",new double[]{0.1,12800.2},new double[]{0,255});
-        plot.draw();
-//        plot.show();
-        ImagePlus plotImage=plot.getImagePlus();
-        String newNameAndPath=fileNameAndPath.replace(fileName,"IntensityProfile_"+fileName).replace(extension,"bmp");
-        IJ.saveAs(plotImage, "BMP", newNameAndPath);
+//        Plot.create("Simple Plot", "X", "Y", yValues);
+//        System.out.println(resultsTable.getLastColumn());
+//        for (int i = 0; i <resultsTable.getLastColumn(); i++) {
+//            if(i==0){
+//                limitsList.add(resultsTable.getColumnAsDoubles(i).length);
+//            }
+//            else{
+//                limitsList.add(limitsList.get(i-1)+resultsTable.getColumnAsDoubles(i).length);
+//            }
+//        }
+////        int limit = resultsTable.getColumn(0);
+//        Plot plot=new Plot("Intensity profile","Distance (pixel)","Intensity");
+//
+//        plot.setColor(Color.BLACK);
+//        plot.add("line",xValues,yValues);
+//        //        java.lang.String title, java.lang.String xLabel, java.lang.String yLabel, double[] xValues, double[] yValues
+////        plot.add("line",new double[]{2800.1,2800.2},new double[]{0,255});
+//        for (int i = 0; i < limitsList.size(); i++) {
+//            plot.setColor(Color.RED);
+//            plot.add("line",new double[]{limitsList.get(i),limitsList.get(i)},new double[]{0,255});
+//        }
+////        plot.setColor(Color.RED);
+////        plot.add("line",new double[]{0.1,12800.2},new double[]{0,255});
+//        plot.draw();
+////        plot.show();
+//        ImagePlus plotImage=plot.getImagePlus();
+//        String newNameAndPath=fileNameAndPath.replace(fileName,"IntensityProfile_"+fileName).replace(extension,"bmp");
+//        IJ.saveAs(plotImage, "BMP", newNameAndPath);
 
 //        resultsTable.show("results");
 //        System.out.println(resultsTable);
@@ -303,6 +315,14 @@ public class FileSpecificData {
         return fileNameAndPath;
     }
 
+    public int getNumberOfPeaks() {
+        return numberOfPeaks;
+    }
+
+    public void setNumberOfPeaks(int numberOfPeaks) {
+        this.numberOfPeaks = numberOfPeaks;
+    }
+
     public double getLength() {
         return length;
     }
@@ -312,15 +332,11 @@ public class FileSpecificData {
     }
 
     public double getFilamentDensity() {
-        return filamentDensity;
-    }
-
-    public void setFilamentDensity(double filamentDensity) {
-        this.filamentDensity = filamentDensity;
+        return 1.0*numberOfPeaks/length;
     }
 
     @Override
     public String toString() {
-        return fileNameAndPath + SEPARATOR + length + SEPARATOR + filamentDensity;
+        return fileNameAndPath + SEPARATOR + length + SEPARATOR + numberOfPeaks + SEPARATOR + getFilamentDensity();
     }
 }

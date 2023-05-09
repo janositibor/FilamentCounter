@@ -1,14 +1,16 @@
 package FilamentCounter;
 
+import FilamentCounter.modell.SettingForCalculationDTO;
+
 public class BasicSettings {
     static int NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS=5;
     private double pixelSize;
     private String directoryName;
-    private PeakCounterSettings peakCounterSettings;
+    private SettingForCalculationDTO settingForCalculation;
 
-    public BasicSettings(double pixelSize, double alpha, double beta, double gamma) {
+    public BasicSettings(double pixelSize, double amplitude, double minHeight, double minDistance) {
         this.pixelSize = pixelSize;
-        this.peakCounterSettings=new PeakCounterSettings(alpha, beta, gamma);
+        this.settingForCalculation=new SettingForCalculationDTO(pixelSize,amplitude,minHeight,minDistance);
     }
 
 
@@ -17,9 +19,6 @@ public class BasicSettings {
         return pixelSize;
     }
 
-    public void setPixelSize(double pixelSize) {
-        this.pixelSize = pixelSize;
-    }
 
     public String getDirectoryName() {
         return directoryName;
@@ -29,7 +28,7 @@ public class BasicSettings {
         this.directoryName = directoryName;
     }
 
-    public PeakCounterSettings getPeakCounterSettings() {
-        return peakCounterSettings;
+    public SettingForCalculationDTO getSettingForCalculation() {
+        return settingForCalculation;
     }
 }
