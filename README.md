@@ -23,6 +23,9 @@ This plugin:
     * Pixel size in micro m  
 	* Amplitude (Based on [BAR Find Peaks documentation](https://imagej.net/plugins/find-peaks) it is the smallest depth (in Y-axis units) that a qualified valley must exceed. By entering 0, it is set to one standard deviation of the data.)
     * Min peak height (The smallest value (in Y-axis units) a qualified peak must exceed.)
-    * Minimal distance between peaks(The smallest separation (in micro m) between identified peaks.)  
-![Choose Filament Counter Option](./ImagesForDocumentation/InputParameters.jpg)  
+    * Minimal distance between peaks (The smallest separation (in micro m) between identified peaks.)  
+![Choose Filament Counter Option](./ImagesForDocumentation/InputParameters.jpg) 
+* Select a folder which contains the files need to be analyzed  
+![Choose Folder](./ImagesForDocumentation/SelectFolder.jpg) 
+
 
