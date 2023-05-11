@@ -23,6 +23,6 @@ This plugin:
     * Pixel size in micro m
 	* Tolerance
     * Min peak height
-    * Minimal distance between peaks
+    * Minimal distance between peaks  
 ![Choose Filament Counter Option](./ImagesForDocumentation/InputParameters.jpg)  
 
