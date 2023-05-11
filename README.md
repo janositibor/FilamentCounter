@@ -8,7 +8,7 @@ The input file should contain a ROI (see the example below).
 This plugin:
 * Create linear ROIS inside the defined area. 
 * It measures the intesity along these lines. 
-* It calculate filaments density (1/mico m) by counting the peaks on these plot profiles by using [BAR Find Peaks](https://imagej.net/plugins/find-peaks).
+* It calculate filaments density (1/mico m) by [BAR Find Peaks](https://imagej.net/plugins/find-peaks)'s peaks identification on these plot profiles.
 
 ## Install
 * Clone the Maven project in this repository to your local drive.
