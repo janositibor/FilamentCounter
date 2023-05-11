@@ -78,8 +78,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+<!--        <maven.compiler.source>17</maven.compiler.source>-->
+<!--        <maven.compiler.target>17</maven.compiler.target>-->
         <package-name>TZJanosi.imagej</package-name>                   <!-- FIXME: Your project package prefix here -->
         <license.licenseName>cc0</license.licenseName>                      <!-- FIXME: Your license-maven-plugin license code here -->
         <license.copyrightOwners>Tibor Zoltan Janosi</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
