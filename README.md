@@ -31,7 +31,14 @@ This plugin:
 * One of the created output is the saved set of linear ROIs (FileName_roi.zip)
 * For a quick overview the linear ROIa are exported as BMP images as well (ROIs_FileName.bmp).
 ![ROI's example](./ImagesForDocumentation/ROIs_Example.jpg)
-* The plot profiles with the idebtified peaks for each input images are available too (IntensityProfile_FileName.bmp).
+* The plot profiles with the identified peaks for each input images are available too (IntensityProfile_FileName.bmp).
 ![Intensity profile example](./ImagesForDocumentation/IntensityProfile_Example.jpg)
+* The main output are the result.csv files for each directory. It contains the output data
+    * filename
+	* length of ROIs in micro m
+	* number of identified peaks
+	* filament density i.e. number of identified peaks divided by length of ROIs
+	* the date and time of analysis
+	* the parameters used by peaks finding
 
 
