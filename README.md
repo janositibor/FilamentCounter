@@ -27,5 +27,11 @@ This plugin:
 ![Choose Filament Counter Option](./ImagesForDocumentation/InputParameters.jpg) 
 * Select a folder which contains the files need to be analyzed  
 ![Choose Folder](./ImagesForDocumentation/SelectFolder.jpg) 
+* The plugin will firstly perform the built in Enhance Local Contrast (CLAHE) algorithm, in order to increase the contrast.
+* One of the created output is the saved set of linear ROIs (FileName_roi.zip)
+* For a quick overview the linear ROIa are exported as BMP images as well (ROIs_FileName.bmp).
+![ROI's example](./ImagesForDocumentation/ROIs_Example.jpg)
+* The plot profiles with the idebtified peaks for each input images are available too (IntensityProfile_FileName.bmp).
+![Intensity profile example](./ImagesForDocumentation/IntensityProfile_Example.jpg)
 
 
