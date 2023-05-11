@@ -132,7 +132,7 @@ public class FileSpecificData {
             }
         }
         xValues = IntStream.rangeClosed(1, totalProfile.size()).mapToDouble(i->settingForCalculation.getPixelSize()*i).toArray();
-        yValues = totalProfile.stream().mapToDouble(d -> 255.0-d).toArray();
+        yValues = totalProfile.stream().mapToDouble(d -> d).toArray();
 
         setLength(settingForCalculation.getPixelSize()*totalProfile.size());
 

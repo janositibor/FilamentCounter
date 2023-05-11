@@ -4,13 +4,16 @@ import FilamentCounter.modell.FoundPeaksDTO;
 import ij.IJ;
 import ij.gui.Plot;
 import ij.plugin.filter.MaximumFinder;
+import ij.util.ArrayUtil;
+import ij.util.Tools;
 
 import java.awt.*;
 
 public class BarFindPeaks {
-    private double tolerance = 0d;
-    private double minPeakDistance =0d;
-    private double minMaximaValue = Double.NaN;
+    private double epsilon=0.000001;
+    private double tolerance;
+    private double minPeakDistance;
+    private double minMaximaValue;
     private double maxMinimaValue = -1;
     private boolean excludeOnEdges = false;
     boolean listValues = false;
@@ -30,6 +33,20 @@ public class BarFindPeaks {
 
     public void setYvalues(double[] yvalues) {
         this.yvalues = yvalues;
+        updateTolerance();
+        System.out.println("tolerance: "+tolerance);
+    }
+
+    private void updateTolerance() {
+        if(Math.abs(tolerance - 0) < epsilon) {
+            float[] yValuesAsFloat;
+//        for (int i = 0 ; i < yvalues.length; i++){
+//            yValuesAsFloat[i] = (float) yvalues[i];
+//        }
+            yValuesAsFloat = Tools.toFloat(yvalues);
+            ArrayUtil stats = new ArrayUtil(yValuesAsFloat);
+            tolerance = Math.sqrt(stats.getVariance());
+        }
     }
 
     private int[] findPositions(double[] values, double tolerance, boolean minima) {

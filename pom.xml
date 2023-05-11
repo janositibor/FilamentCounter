@@ -13,15 +13,15 @@
 	
 	<groupId>TZJanosi</groupId>
     <artifactId>FilamentCounter</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <name>Filament Counter</name>                                               <!-- FIXME: Your project name here          -->
-    <description>A Maven project implementing an ImageJ command.</description> <!-- FIXME: Your project description here   -->
-    <url>https://mycompany.com/imagej/gauss-filtering/</url>                   <!-- FIXME: Your project website here       -->
-    <inceptionYear>2017</inceptionYear>                                        <!-- FIXME: Your project starting year here -->
+    <description>A Maven project implementing an ImageJ command to count filaments in specified ROIs.</description> <!-- FIXME: Your project description here   -->
+    <url>https://github.com/janositibor/FilamentCounter</url>                   <!-- FIXME: Your project website here       -->
+    <inceptionYear>2023</inceptionYear>                                        <!-- FIXME: Your project starting year here -->
     <organization>
-        <name>My Company</name>           <!-- FIXME: Your organization name here    -->
-        <url>https://mycompany.com/</url> <!-- FIXME: Your organization website here -->
+        <name>Tibor Zoltan Janosi</name>           <!-- FIXME: Your organization name here    -->
+        <url>https://github.com/janositibor</url> <!-- FIXME: Your organization website here -->
     </organization>
     <licenses>
         <license>                         <!-- FIXME: Your license here -->
@@ -35,8 +35,8 @@
         <!-- See https://imagej.net/Team -->
         <developer>
             <id>janositibor</id>                                          <!-- FIXME: Your GitHub handle here -->
-            <name>Tibor janosi</name>                            <!-- FIXME: Your name here          -->
-            <url>https://mycompany.com/people/noma-onomatopoeia</url> <!-- FIXME: Your website here       -->
+            <name>Tibor Zoltan Janosi</name>                            <!-- FIXME: Your name here          -->
+            <url>https://github.com/janositibor</url> <!-- FIXME: Your website here       -->
             <roles>
                 <role>founder</role>
                 <role>lead</role>
@@ -80,13 +80,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <package-name>com.mycompany.imagej</package-name>                   <!-- FIXME: Your project package prefix here -->
-        <main-class>com.mycompany.imagej.GaussFiltering</main-class>        <!-- FIXME: Your project main class here, or delete for none -->
+        <package-name>TZJanosi.imagej</package-name>                   <!-- FIXME: Your project package prefix here -->
         <license.licenseName>cc0</license.licenseName>                      <!-- FIXME: Your license-maven-plugin license code here -->
-        <license.copyrightOwners>My Company, Inc.</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
+        <license.copyrightOwners>Tibor Zoltan Janosi</license.copyrightOwners> <!-- FIXME: Your organization legal entity name here -->
     </properties>
-
-
 
     <dependencyManagement>
         <dependencies>
@@ -121,35 +118,6 @@
             <artifactId>ij</artifactId>
             <version>1.54d</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>net.imagej</groupId>-->
-<!--            <artifactId>ij-io</artifactId>-->
-<!--            <version>2.0.0-beta3</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.openjfx</groupId>-->
-<!--            <artifactId>javafx-controls</artifactId>-->
-<!--            <version>20.0.1</version>-->
-<!--        </dependency>-->
-<!--	    <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-jdbc</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>ch.qos.logback</groupId>-->
-<!--            <artifactId>logback-classic</artifactId>-->
-<!--            <version>1.2.3</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.flywaydb</groupId>-->
-<!--            <artifactId>flyway-mysql</artifactId>-->
-<!--            <version>8.4.4</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.mariadb.jdbc</groupId>-->
-<!--            <artifactId>mariadb-java-client</artifactId>-->
-<!--            <version>3.0.3</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
