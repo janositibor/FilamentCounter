@@ -20,7 +20,9 @@ This plugin:
 * Choose the Plugin>Filament Counter option
 ![Choose Filament Counter Option](./ImagesForDocumentation/ChooseMenuOption.jpg)  
 * Provide the requred data for the peak identification
-    * Tolerance
+    * Pixel size in micro m
+	* Tolerance
     * Min peak height
     * Minimal distance between peaks
+![Choose Filament Counter Option](./ImagesForDocumentation/InputParameters.jpg)  
 
