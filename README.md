@@ -3,7 +3,7 @@
 ## Purpose
 This FIJI Plugin expect input files in an arbitrary folder structure.  
 The program will process all the .tif files and create the result.csv files for each folder recursively.  
-The input file should contain a ROI (see the example below).  
+The input file should contain a ROI (you can find an example in the ExampleData folder).  
 ![Input *.tif image example](./ImagesForDocumentation/Input.jpg)  
 This plugin:
 * Create linear ROIS inside the defined area. 
