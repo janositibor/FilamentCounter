@@ -51,6 +51,7 @@ public class LineForFilamentsCounter implements Comparable<LineForFilamentsCount
     @Override
     public String toString() {
         return "LineForFilamentsCounter{" +
+                "length=" + length +
                 "begin=" + begin +
                 ", end=" + end +
                 '}';

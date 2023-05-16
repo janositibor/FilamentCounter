@@ -9,7 +9,6 @@ import ij.plugin.frame.RoiManager;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -24,10 +23,7 @@ public class FileSpecificData {
     private int numberOfPeaks=0;
     private Opener opener = new Opener();
     private ImagePlus image;
-    private Roi roi;
-    private List<LineForFilamentsCounter> sides =new ArrayList<>();
-    private LineForFilamentsCounter controlLine1;
-    private LineForFilamentsCounter controlLine2;
+    private StartingROI startingROI;
     private RoiManager roiManager = new RoiManager();
     private ResultsTable resultsTable = new ResultsTable();
     private double[] xValues;
@@ -45,10 +41,8 @@ public class FileSpecificData {
         setExtension();
         loadImage();
         enhance();
-        setRoi();
-        setRoiCoordinates();
-        setControlLines();
-        setLinesToCalculateFilaments();
+        setStartingROI();
+        setNewROIs();
         saveUsedRois();
         getProfiles();
         findPeaks();
@@ -146,24 +140,14 @@ public class FileSpecificData {
         }
    }
 
-    private void setLinesToCalculateFilaments() {
-        Coordinates begin;
-        Coordinates end;
+   private void setNewROIs(){
         LineForFilamentsCounter line;
-        for (int i = 0; i < BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS; i++) {
-            begin=controlLine1.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
-            end=controlLine2.equalPartCoordinates(i+1,BasicSettings.NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS+1);
-            line=new LineForFilamentsCounter(begin,end);
-            line.shrink(10);
+        for (int i = 0; i < startingROI.getNewROIs().size(); i++) {
+            line=startingROI.getNewROIs().get(i);
             image.setRoi(new Line(line.getBegin().getX(),line.getBegin().getY(),line.getEnd().getX(),line.getEnd().getY()));
             roiManager.addRoi(image.getRoi());
         }
         roiManager.save(fileNameAndPath+"_roi.zip");
-    }
-
-    private void setControlLines() {
-        controlLine1=new LineForFilamentsCounter(sides.get(0).getBegin(),sides.get(1).getEnd());
-        controlLine2=new LineForFilamentsCounter(sides.get(0).getEnd(),sides.get(1).getBegin());
     }
 
     private void loadImage() {
@@ -172,23 +156,8 @@ public class FileSpecificData {
         image.show();
     }
 
-    private void setRoiCoordinates(){
-        Polygon boundary=roi.getPolygon();
-        Coordinates begin;
-        Coordinates end;
-        LineForFilamentsCounter line;
-
-        for (int i=0;i<boundary.npoints-1;i++) {
-            begin=new Coordinates(boundary.xpoints[i],boundary.ypoints[i]);
-            end=new Coordinates(boundary.xpoints[i+1],boundary.ypoints[i+1]);
-            line=new LineForFilamentsCounter(begin,end);
-            sides.add(line);
-        }
-        Collections.sort(sides);
-    }
-
-    private void setRoi(){
-        roi=image.getRoi();
+    public void setStartingROI() {
+        this.startingROI = new StartingROI(image.getRoi());
     }
 
     private void enhance(){
