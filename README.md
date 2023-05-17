@@ -13,7 +13,7 @@ This plugin:
 ## Install
 * Clone the Maven project in this repository to your local drive.
 * Build your *.jar files
-* Copy the FilamentCounter-*.*.jar fil to the plugins folder of FIJI (for example: Program Files/FIJI/plugins)
+* Copy the FilamentCounter-\*.\*.jar fil to the plugins folder of FIJI (for example: Program Files/FIJI/plugins)
 
 ## Use
 * Run FIJI
