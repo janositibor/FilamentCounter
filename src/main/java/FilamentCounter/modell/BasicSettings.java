@@ -4,6 +4,8 @@ import FilamentCounter.modell.SettingForCalculationDTO;
 
 public class BasicSettings {
     public static int NUMBER_OF_LINES_TO_CALCULATE_FILAMENTS=5;
+    public static double EPSILON_FOR_LINE_VERTICALITY=0.00000001;
+    public static double EPSILON_FOR_SIDES_DEVIATION=0.0000001;
     private double pixelSize;
     private String directoryName;
     private SettingForCalculationDTO settingForCalculation;

@@ -1,5 +1,9 @@
 package FilamentCounter.modell;
 
+import ij.gui.Roi;
+
+import java.util.Optional;
+
 public class LineForFilamentsCounter implements Comparable<LineForFilamentsCounter>{
     private Coordinates begin;
     private Coordinates end;
@@ -9,6 +13,17 @@ public class LineForFilamentsCounter implements Comparable<LineForFilamentsCount
         this.begin = begin;
         this.end = end;
         calculateLength();
+    }
+
+    private boolean isVertical(){
+        return Math.abs(begin.getX()- end.getX())<BasicSettings.EPSILON_FOR_LINE_VERTICALITY;
+    }
+
+    public Optional<Double> gradient(){
+        if(isVertical()){
+            return Optional.empty();
+        }
+        return Optional.of((end.getY()- begin.getY())/(end.getX()- begin.getX()));
     }
 
     public void shrink(int percent) {
@@ -24,10 +39,16 @@ public class LineForFilamentsCounter implements Comparable<LineForFilamentsCount
     }
 
     public Coordinates equalPartCoordinates(int nth,int total){
-        double x=begin.getX()+((end.getX()- begin.getX())*(1.0*nth/total));
-        double y=begin.getY()+((end.getY()- begin.getY())*(1.0*nth/total));
-//        System.out.println(nth+": "+x+" "+y);
+        double x=begin.getX()+((end.getX()-begin.getX())*(1.0*nth/total));
+        double y=begin.getY()+((end.getY()-begin.getY())*(1.0*nth/total));
         return new Coordinates(x,y);
+    }
+
+    public Coordinates coordinatesForBeginExtension(int nth, int total){
+        return equalPartCoordinates(-1*nth,total);
+    }
+    public Coordinates coordinatesForEndExtension(int nth, int total){
+        return equalPartCoordinates(nth+total,total);
     }
 
     @Override
@@ -55,5 +76,41 @@ public class LineForFilamentsCounter implements Comparable<LineForFilamentsCount
                 "begin=" + begin +
                 ", end=" + end +
                 '}';
+    }
+
+    public void extendBegin(Roi roi){
+        int rate=16;
+        Coordinates candidateCoordinates;
+        while(rate>0){
+            candidateCoordinates= coordinatesForBeginExtension(rate,100);
+            if(roi.contains((int)candidateCoordinates.getX(),(int)candidateCoordinates.getY())){
+                begin=candidateCoordinates;
+                rate*=2;
+            }
+            else{
+                rate/=2;
+            }
+        }
+    }
+
+
+    public void extend(Roi roi) {
+        extendBegin(roi);
+        extendEnd(roi);
+    }
+
+    private void extendEnd(Roi roi) {
+        int rate=16;
+        Coordinates candidateCoordinates;
+        while(rate>0){
+            candidateCoordinates= coordinatesForEndExtension(rate,100);
+            if(roi.contains((int)candidateCoordinates.getX(),(int)candidateCoordinates.getY())){
+                end=candidateCoordinates;
+                rate*=2;
+            }
+            else{
+                rate/=2;
+            }
+        }
     }
 }
