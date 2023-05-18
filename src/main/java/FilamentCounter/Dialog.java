@@ -103,7 +103,7 @@ public class Dialog implements PlugIn {
         }
     }
 
-    public BasicSettings getBasicData() {
+    public BasicSettings getBasicSettings() {
         return basicSettings;
     }
 }

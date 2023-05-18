@@ -26,7 +26,7 @@ public class FilamentCounter<T extends RealType<T>> implements Command {
     public void run() {
         Dialog dialog=new Dialog();
         dialog.run("Required data for peak identification");
-        basicSettings =dialog.getBasicData();
+        basicSettings =dialog.getBasicSettings();
 
         DirectoryChooser dc = new DirectoryChooser("Choose directory");
         String directory=dc.getDirectory();
